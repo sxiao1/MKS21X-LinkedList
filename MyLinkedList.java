@@ -1,12 +1,23 @@
 public class MyLinkedList{
   private int size;
   private Node start,end;
+
   public MyLinkedList(){
     size = 0;
   }
+
   public int size(){
     return size;
   }
+
+  public void extend(MyLinkedList other){
+    size = this.size() + other.size();
+    Node temp = this.end;
+    end = other.end;
+    temp.setNext(other.start);
+    other.start.setPrevious(temp);
+  }
+
   public boolean add(Integer value){
     if(size > 0){
       Node newNode = new Node(value, null, end); //adding to the end of the node
@@ -22,6 +33,7 @@ public class MyLinkedList{
     }
     return true;
   }
+
   public void add(int index, Integer value){
     if(index < 0 || index >= size){
       throw new IndexOutOfBoundsException();
@@ -33,6 +45,12 @@ public class MyLinkedList{
       start = newNode;
       size++;
     }
+    else if(index == size){ //if adding to the end
+      Node newNode = new Node(value, null, end);
+      end.setNext(newNode);
+      end = newNode;
+      size ++;
+    }
     else {
       for(int i = 0; i < size ; i ++){
         if(i == index){
@@ -40,35 +58,38 @@ public class MyLinkedList{
           current.getPrevious().setNext(newNode);
           current.setPrevious(newNode);
         }
-        current = current.getNext();
+        else{
+          current = current.getNext();
+        }
       }
       size ++;
     }
   }
+
   public Integer get(int index){
-    Node current = start;
-    int i = 0;
-    while(i < size){
-      if(i == index){
-        return current.getData();
-      }
-      i ++;
-      current = current.getNext();
-    }
-    throw new IndexOutOfBoundsException("invalid Index");
-  }
-  public Integer set(int index, Integer value){
     if(index < 0 || index >= size){
-      throw new IndexOutOfBoundsException();
+      throw new IndexOutOfBoundsException("Invalid index at" + index);
     }
     Node current = start;
     for(int i = 0; i < index; i ++){
       current = current.getNext();
     }
-    Integer out = current.getData();
-    current.setData(value);
-    return out;
+    return current.getData();
   }
+
+  public Integer set(int index, Integer value){
+    if(index < 0 || index >= size){
+      throw new IndexOutOfBoundsException("Invalid index at");
+    }
+    Node current = start;
+    for(int i = 0; i < index; i ++){
+      current = current.getNext();
+    }
+    Integer ans = current.getData();
+    current.setData(value);
+    return ans;
+  }
+
   public boolean contains(Integer value){
     Node current = start;
     for(int i = 0; i < size; i ++){
@@ -81,6 +102,7 @@ public class MyLinkedList{
     }
     return false; //loops but no matched value return false
   }
+
   public int indexOf(Integer value){
     Node current = start;
     int index = 0;
@@ -95,16 +117,19 @@ public class MyLinkedList{
     }
     return -1; //no matched value, invalid index
   }
+
   public Integer remove(int index){
     if(index == 0){ //if first element
+      Integer oldStart = start.getData();
       start = start.getNext(); // shift over the start
       size --;
-      return start.getData();
+      return oldStart;
     }
     if(index == size - 1){ //if last element
+      Integer oldEnd = end.getData();
       end = end.getPrevious(); //shift over end
       size --;
-      return end.getData();
+      return oldEnd;
     }
     else{
       Node before;
@@ -119,6 +144,7 @@ public class MyLinkedList{
       return current.getData();
     }
   }
+
   public boolean remove(Integer value){
     if(contains((int)value)){ //if value is there
       int index = indexOf(value);
@@ -127,6 +153,7 @@ public class MyLinkedList{
     }
     return false;
   }
+
   public String toString(){
     if(size == 0){
       return "[]";
@@ -140,6 +167,7 @@ public class MyLinkedList{
     str += current.getData() + "]"; //add last element and end
     return str;
   }
+
   private Node getNode(int index){
     Node current = start;
     for(int i = 0; i < index; i++){
@@ -163,7 +191,7 @@ private class Node{
   public Integer setData(Integer i){
     Integer oldData = data;
     data = i; //set data
-    return data;
+    return oldData;
   }
   public Node getNext(){
     return next; //return the next value
