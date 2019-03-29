@@ -1,8 +1,12 @@
-public class MyLinkedList{
+public class MyLinkedList<E>{
   private int size;
   private Node start,end;
+  private E[] data;
 
   public MyLinkedList(){
+    @SuppressWarnings("unchecked")
+    E[] d = (E[]) new Object[10];
+    data = d;
     size = 0;
   }
 
